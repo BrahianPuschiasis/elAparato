@@ -1,0 +1,10 @@
+Roles creados (a nivel reino):
+
+repositor
+administrador
+vendedor
+
+repositor permite acceder a: productos/**
+vendedor permite acceder a: ventas/**
+administrador permite acceder a: ventas/**, productos/**, users/**
+

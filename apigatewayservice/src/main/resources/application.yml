@@ -1,0 +1,40 @@
+server:
+    port: 9090
+spring:
+    cloud:
+        gateway:
+            default-filters:
+                - TokenRelay
+            routes:
+                -   id: productos
+                    predicates:
+                        - Path=/productos/**
+                    uri: http://localhost:8086
+                -   id: ventas
+                    predicates:
+                        - Path=/ventas/**
+                    uri: http://localhost:8086
+                -   id: users
+                    predicates:
+                        - Path=/users/**
+                    uri: http://localhost:8086
+
+    security:
+        oauth2:
+            client:
+                provider:
+                    keycloak-test:
+                        issuer-uri: http://localhost:8080/realms/el-aparato
+                registration:
+                    keycloak-test:
+                        authorization-grant-type: authorization_code
+                        client-id: api-gateway-client
+                        client-secret: "**********"
+#                        provider: api-gateway-service
+                        redirect-uri: http://localhost:9090/login/oauth2/code/keycloak
+                        scope:
+                            - openid
+
+logging:
+    level:
+        org.springframework.security: TRACE
