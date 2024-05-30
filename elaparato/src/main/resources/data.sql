@@ -15,7 +15,7 @@ INSERT IGNORE INTO venta (id_venta, fecha) VALUES
   (5, '2023-05-01');
 
 -- Inserts de lista de productos de ventas
-INSERT IGNORE INTO producto_lista_ventas (lista_productos_id, lista_ventas_id_venta) VALUES
+INSERT IGNORE INTO producto_lista_ventas (id_venta,id_producto) VALUES
   (1, 1),
   (2, 1),
   (3, 1),
@@ -30,8 +30,3 @@ INSERT IGNORE INTO producto_lista_ventas (lista_productos_id, lista_ventas_id_ve
   (3, 5),
   (4, 5);
 
--- Modificar las secuencias de producto_seq
-UPDATE producto_seq SET next_val = 6;
-
--- Modificar las secuencias de venta_seq
-UPDATE venta_seq SET next_val = 6;

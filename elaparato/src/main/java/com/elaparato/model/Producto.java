@@ -12,16 +12,15 @@ import java.util.List;
 @Entity
 public class Producto {
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nombre;
     private String descripcion;
     private int precio;
     private int cantidad;
 
-    @ManyToMany
-    //@JoinColumn (name="id_venta")
-    @JsonIgnore //importante agregar para evitar errores de formato en la response
+    @ManyToMany(mappedBy = "listaProductos")
+    @JsonIgnore
     private List<Venta> listaVentas;
 
     public Producto() {
