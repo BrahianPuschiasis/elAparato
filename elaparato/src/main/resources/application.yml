@@ -4,7 +4,7 @@ server:
 el-aparato:
   keycloak:
     serverUrl: http://localhost:8080
-    realm: el-aparato
+    realm: el-aparato-Brahian
     clientId: api-internal-users-client
     clientSecret: "**********"
 
@@ -15,7 +15,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/el-aparato
+          issuer-uri: http://localhost:8080/realms/el-aparato-Brahian
   datasource:
     url: jdbc:mysql://localhost:3306/elaparato?createDatabaseIfNotExist=true
     username: root
