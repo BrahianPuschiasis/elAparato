@@ -44,8 +44,7 @@ public class UserRepository implements IUserRepository{
                 .search(userName);
         return userRepresentation.stream().map(this::toUser)
                 .collect(Collectors.toList());
-        /*return userRepresentation.stream().map(user -> fromUserRepresentation(user))
-                .collect(Collectors.toList());*/
+
     }
 
     private User fromUserRepresentation(UserRepresentation userRepresentation) {

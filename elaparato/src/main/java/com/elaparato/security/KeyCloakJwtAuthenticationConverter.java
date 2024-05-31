@@ -20,27 +20,18 @@ import java.util.stream.Stream;
 @Component
 public class KeyCloakJwtAuthenticationConverter implements Converter<Jwt, JwtAuthenticationToken> {
 
-    private final JwtGrantedAuthoritiesConverter defaultGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-
-    private static Collection<? extends GrantedAuthority> extractResourceRoles(final Jwt jwt) throws JsonProcessingException {
+    private static Collection<GrantedAuthority> extractResourceRoles(final Jwt jwt) throws JsonProcessingException {
         Set<GrantedAuthority> resourcesRoles = new HashSet<>();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        JsonNode claims = objectMapper.readTree(objectMapper.writeValueAsString(jwt)).get("claims");
-        resourcesRoles.addAll(extractRoles("resource_access", claims));
-        resourcesRoles.addAll(extractRolesRealmAccess("realm_access", claims));
-        resourcesRoles.addAll(extractAud("aud", claims));
-        return resourcesRoles;
-    }
 
-    private static List<GrantedAuthority> extractRoles(String route, JsonNode jwt) {
-        Set<String> rolesWithPrefix = new HashSet<>();
-        jwt.path(route)
-                .elements()
-                .forEachRemaining(e -> e.path("roles")
-                        .elements()
-                        .forEachRemaining(r -> rolesWithPrefix.add("ROLE_" + r.asText())));
-        return AuthorityUtils.createAuthorityList(rolesWithPrefix.toArray(new String[0]));
+        // Parsear el JWT para obtener los claims
+        JsonNode claims = objectMapper.readTree(objectMapper.writeValueAsString(jwt)).get("claims");
+
+        // Extraer solo los roles de "realm_access" aka reino
+        resourcesRoles.addAll(extractRolesRealmAccess("realm_access", claims));
+
+        return resourcesRoles;
     }
 
     private static List<GrantedAuthority> extractRolesRealmAccess(String route, JsonNode jwt) {
@@ -52,30 +43,21 @@ public class KeyCloakJwtAuthenticationConverter implements Converter<Jwt, JwtAut
         return AuthorityUtils.createAuthorityList(rolesWithPrefix.toArray(new String[0]));
     }
 
-    private static List<GrantedAuthority> extractAud(String route, JsonNode jwt) {
-        Set<String> rolesWithPrefix = new HashSet<>();
-        jwt.path(route)
-                .elements()
-                .forEachRemaining(e -> rolesWithPrefix.add("AUD_" + e.asText()));
-        return AuthorityUtils.createAuthorityList(rolesWithPrefix.toArray(new String[0]));
-    }
-
     @Override
     public JwtAuthenticationToken convert(final Jwt source) {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        Collection<GrantedAuthority> authorities;
         try {
             authorities = getGrantedAuthorities(source);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+            authorities = Collections.emptyList();
         }
         return new JwtAuthenticationToken(source, authorities);
     }
 
     private Collection<GrantedAuthority> getGrantedAuthorities(Jwt source) throws JsonProcessingException {
-        return Stream.concat(
-                defaultGrantedAuthoritiesConverter.convert(source).stream(),
-                extractResourceRoles(source).stream()
-        ).collect(Collectors.toSet());
+        // No necesitamos el convertidor predeterminado, ya que solo estamos usando roles de realm_access/reino
+        return extractResourceRoles(source);
     }
 }
 

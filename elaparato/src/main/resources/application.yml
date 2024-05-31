@@ -22,7 +22,6 @@ spring:
     password: asease22
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialization-mode: always
-    data: classpath:data.sql
   jpa:
     hibernate:
       ddl-auto: update
